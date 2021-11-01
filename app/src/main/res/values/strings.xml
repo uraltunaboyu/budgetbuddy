@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Budget Buddy</string>
+    <string name="set_your_budget_to_get_started">Set your budget to get started</string>
+    <string name="enter_your_budget">Enter your budget</string>
+    <string name="transaction_memo">Transaction memo</string>
+    <string name="settings">Settings</string>
+</resources>
