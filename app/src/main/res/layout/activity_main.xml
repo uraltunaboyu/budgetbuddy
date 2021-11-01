@@ -138,5 +138,22 @@
         </LinearLayout>
     </ScrollView>
 
+    <Button
+        android:id="@+id/funds_bump"
+        style="@android:style/Widget.Material.Light.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="addFundsDialog"
+        android:text="Add funds"
+        android:textColor="#000000"
+        android:visibility="invisible"
+        app:icon="@drawable/plus"
+        app:iconTint="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/budgetText"
+        app:layout_constraintEnd_toEndOf="@+id/budgetText"
+        app:layout_constraintStart_toEndOf="@+id/budgetText"
+        app:layout_constraintTop_toTopOf="@+id/budgetText"
+        tools:visibility="visible" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
