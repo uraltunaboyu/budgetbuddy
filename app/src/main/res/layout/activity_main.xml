@@ -138,13 +138,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <Button
+    <ImageButton
         android:id="@+id/funds_bump"
         style="@android:style/Widget.Material.Light.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/plus"
         android:onClick="addFundsDialog"
-        android:text="Add funds"
         android:textColor="#000000"
         android:visibility="invisible"
         app:icon="@drawable/plus"
