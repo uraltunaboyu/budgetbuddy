@@ -1,4 +1,4 @@
-package com.example.budgetbuddy
+package com.tunaboyu.budgetbuddy
 
 import android.app.Dialog
 import android.content.Context
@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.DialogFragment
+import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.ActivityMainBinding
 import java.lang.ClassCastException
 import java.time.LocalDateTime
@@ -49,21 +50,22 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        return when(item.itemId) {
             R.id.nav_clear_data -> {
                 clearAllData()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return when(keyCode) {
             KeyEvent.KEYCODE_ENTER , KeyEvent.KEYCODE_NUMPAD_ENTER-> {
-                if (binding.budgetEntry.text.toString() != "") {
+                val userEntry = binding.budgetEntry.text.toString()
+                if (userEntry != "") {
                     if (firstUse) {
-                        firstTimeSetup(Integer.parseInt(binding.budgetEntry.text.toString()))
+                        firstTimeSetup(Integer.parseInt(userEntry))
                     } else {
                         generateTransaction()
                     }
@@ -154,6 +156,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         binding.budgetText.text = budget.getRemainingFunds().toString()
     }
 
+    // redundant parameter view is expected by the button in activity_main.xml
     fun addFundsDialog(view: View) = AddFundsDialogFragment().show(supportFragmentManager, "add_funds")
 
     override fun addFunds(funds: Int) = setFunds(budget.getRemainingFunds() + funds)
@@ -193,13 +196,15 @@ class AddFundsDialogFragment: DialogFragment() {
             val fundsToAdd = view.findViewById<EditText>(R.id.funds_to_add)
 
             builder.setView(view)
-                .setPositiveButton(R.string.add,
+                .setPositiveButton(
+                    R.string.add,
                 DialogInterface.OnClickListener { dialog, id ->
                     if (fundsToAdd.text.toString() != "") {
                         listener.addFunds(Integer.parseInt(fundsToAdd.text.toString()))
                     }
                 })
-                .setNegativeButton(R.string.cancel,
+                .setNegativeButton(
+                    R.string.cancel,
                 DialogInterface.OnClickListener { dialog, id ->
                 })
             builder.create()

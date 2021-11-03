@@ -1,4 +1,4 @@
-package com.example.budgetbuddy
+package com.tunaboyu.budgetbuddy
 
 import android.os.Bundle
 import android.os.PersistableBundle

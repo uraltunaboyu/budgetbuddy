@@ -1,4 +1,4 @@
-package com.example.budgetbuddy
+package com.tunaboyu.budgetbuddy
 
 import android.content.Context
 import android.util.Log
