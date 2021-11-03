@@ -11,7 +11,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -78,9 +77,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     private fun clearAllData() {
         db.budgetDao().deleteAll()
         db.transactionDao().deleteAll()
-        budget = Budget(0)
-        db.budgetDao().save(budget)
-        updateFundsText()
+        setFunds(0)
         binding.transactionTable.removeAllViews()
     }
 
@@ -89,7 +86,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         val transactionDate = LocalDateTime.now().format(dateFormatter)
         val transactionCost = Integer.parseInt(binding.budgetEntry.text.toString())
         val transactionMemo = binding.budgetMemo.text.toString()
-        addTransaction(transactionDate, transactionCost, transactionMemo)
+        addTransaction(Transaction(transactionDate, transactionCost, transactionMemo))
     }
 
     private fun loadSavedData(): Boolean {
@@ -99,6 +96,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
             budget = loadedBudget
             budget.setTransactions(loadedTransactions)
             doSetup()
+            setFunds()
             loadedTransactions.map { addTransactionToTable(it) }
             return true
         }
@@ -106,11 +104,8 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     }
 
     private fun addTransaction(
-        transactionDate: String,
-        transactionCost: Int,
-        transactionMemo: String
+        newTransaction: Transaction
     ) {
-        val newTransaction = Transaction(transactionDate, transactionCost, transactionMemo)
         db.transactionDao().save(newTransaction)
         budget.transact(newTransaction)
         db.budgetDao().save(budget)
@@ -148,25 +143,24 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         binding.budgetText.textSize = 34F
         binding.budgetEntry.hint = "Transaction cost"
         firstUse = false
-        updateFundsText()
     }
 
     private fun firstTimeSetup(funds: Int) {
-        budget.setFunds(funds)
         doSetup()
-        db.budgetDao().save(budget)
+        setFunds(funds)
     }
 
     private fun updateFundsText() {
         binding.budgetText.text = budget.getRemainingFunds().toString()
     }
 
-    public fun addFundsDialog(view: View) {
-        AddFundsDialogFragment().show(supportFragmentManager, "add_funds")
-    }
+    fun addFundsDialog(view: View) = AddFundsDialogFragment().show(supportFragmentManager, "add_funds")
 
-    override fun addFunds(funds: Int) {
-        budget.setFunds(budget.getRemainingFunds() + funds)
+    override fun addFunds(funds: Int) = setFunds(budget.getRemainingFunds() + funds)
+
+    private fun setFunds(funds: Int = budget.getRemainingFunds()) {
+        budget.setFunds(funds)
+        db.budgetDao().save(budget)
         updateFundsText()
     }
 
