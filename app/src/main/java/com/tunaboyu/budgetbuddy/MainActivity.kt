@@ -16,8 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.DialogFragment
-import com.example.budgetbuddy.R
-import com.example.budgetbuddy.databinding.ActivityMainBinding
+import com.tunaboyu.budgetbuddy.databinding.ActivityMainBinding
 import java.lang.ClassCastException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -96,7 +95,6 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         val loadedTransactions = db.transactionDao().loadAll()
         if (loadedBudget != null) {
             budget = loadedBudget
-            budget.setTransactions(loadedTransactions)
             doSetup()
             setFunds()
             loadedTransactions.map { addTransactionToTable(it) }
@@ -197,16 +195,16 @@ class AddFundsDialogFragment: DialogFragment() {
 
             builder.setView(view)
                 .setPositiveButton(
-                    R.string.add,
-                DialogInterface.OnClickListener { dialog, id ->
+                    R.string.add
+                ) { _, _ ->
                     if (fundsToAdd.text.toString() != "") {
                         listener.addFunds(Integer.parseInt(fundsToAdd.text.toString()))
                     }
-                })
+                }
                 .setNegativeButton(
-                    R.string.cancel,
-                DialogInterface.OnClickListener { dialog, id ->
-                })
+                    R.string.cancel
+                ) { _, _ ->
+                }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }

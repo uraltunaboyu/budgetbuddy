@@ -2,10 +2,7 @@ package com.tunaboyu.budgetbuddy
 
 import android.content.Context
 import android.util.Log
-import android.widget.TextView
 import androidx.room.*
-import com.example.budgetbuddy.databinding.ActivityMainBinding
-import java.util.ArrayList
 
 @Entity
 class Budget(private var remainingFunds: Int) {
@@ -16,13 +13,6 @@ class Budget(private var remainingFunds: Int) {
 
     fun setFunds(funds: Int) {
         this.remainingFunds = funds
-    }
-
-    fun setTransactions(transactions: List<Transaction>) {
-        Log.i("BudgetBuddy", "Loading transactions $transactions")
-        if (transactions.isNotEmpty()) {
-            this.transactionId = transactions.last().uid
-        }
     }
 
     fun transact(transaction: Transaction) {

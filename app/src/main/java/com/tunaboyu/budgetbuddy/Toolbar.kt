@@ -3,7 +3,7 @@ package com.tunaboyu.budgetbuddy
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.budgetbuddy.databinding.ActivityMainBinding
+import com.tunaboyu.budgetbuddy.databinding.ActivityMainBinding
 
 class Toolbar: AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

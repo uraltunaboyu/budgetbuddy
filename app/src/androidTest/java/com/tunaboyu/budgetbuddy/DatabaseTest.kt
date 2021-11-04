@@ -1,14 +1,15 @@
 package com.tunaboyu.budgetbuddy
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.junit.Assert.*
+import org.junit.runner.RunWith
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
@@ -20,10 +21,11 @@ class DatabaseTest {
     companion object {
         private val exampleTransaction = Transaction("10/10/10", 10, "")
     }
-
+    
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        Log.d("BudgetTests", "Loaded context")
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries().fallbackToDestructiveMigration().build()
         budgetDao = db.budgetDao()
@@ -35,7 +37,7 @@ class DatabaseTest {
     fun closeDb() {
         db.close()
     }
-
+    
     @Test
     fun testWritingAndReadingBudget() {
         val budget = Budget(20)
