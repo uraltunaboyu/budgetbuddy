@@ -6,10 +6,7 @@ import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.EditText
 import android.widget.TableRow
 import android.widget.TextView
@@ -114,22 +111,11 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     }
 
     private fun addTransactionToTable(transaction: Transaction) {
-        val dateField = TextView(this)
-        dateField.text = transaction.date
-        dateField.setPadding(5, 0, 10, 0)
-        val costField = TextView(this)
-        costField.text = transaction.cost.toString()
-        costField.setPadding(10, 0, 5, 0)
-        val memoField = TextView(this)
-        memoField.text = transaction.memo
-        memoField.setPadding(20, 0, 5, 0)
-        memoField.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
-        val newRow = TableRow(this)
-        newRow.addView(dateField)
-        newRow.addView(costField)
-        newRow.addView(memoField)
-        Log.i(TAG, "Adding transaction to table")
-        binding.transactionTable.addView(newRow)
+        val transactionCard = TransactionCard(this)
+        transactionCard.setTransaction(transaction)
+        binding.transactionTable.addView(transactionCard)
+        binding.budgetEntry.setText("")
+        binding.budgetMemo.setText("")
     }
 
     private fun doSetup() {
@@ -142,6 +128,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         constraintSet.applyTo(constraintLayout)
         binding.budgetText.textSize = 34F
         binding.budgetEntry.hint = "Transaction cost"
+        binding.budgetEntry.setText("")
         firstUse = false
     }
 
@@ -167,45 +154,5 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
 
     companion object {
         private const val TAG = "BudgetBuddy"
-    }
-}
-
-class AddFundsDialogFragment: DialogFragment() {
-    internal lateinit var listener: AddFundsDialogListener
-
-    interface AddFundsDialogListener {
-        fun addFunds(funds: Int)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            listener = context as AddFundsDialogListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException("$context must implement AddFundsDialogListener")
-        }
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val builder = AlertDialog.Builder(it)
-            val inflater = requireActivity().layoutInflater
-            val view = inflater.inflate(R.layout.dialog_fund_bump, null)
-            val fundsToAdd = view.findViewById<EditText>(R.id.funds_to_add)
-
-            builder.setView(view)
-                .setPositiveButton(
-                    R.string.add
-                ) { _, _ ->
-                    if (fundsToAdd.text.toString() != "") {
-                        listener.addFunds(Integer.parseInt(fundsToAdd.text.toString()))
-                    }
-                }
-                .setNegativeButton(
-                    R.string.cancel
-                ) { _, _ ->
-                }
-            builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
     }
 }
