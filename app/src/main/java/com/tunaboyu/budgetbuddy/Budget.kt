@@ -6,8 +6,7 @@ import androidx.room.*
 
 @Entity
 class Budget(private var remainingFunds: Int) {
-    @PrimaryKey(autoGenerate = true) var uid: Int = 0
-    var transactionId = 1
+    @PrimaryKey(autoGenerate = true) var uid: Int = 1
 
     fun getRemainingFunds() = remainingFunds
 
