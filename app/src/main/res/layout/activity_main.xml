@@ -52,12 +52,12 @@
         android:maxLines="1"
         android:minHeight="48dp"
         android:visibility="invisible"
-        app:layout_constraintHorizontal_bias="0.1"
-        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
+        tools:visibility="visible" />
 
     <EditText
         android:id="@+id/transactionMemo"
@@ -68,16 +68,17 @@
         android:inputType="textAutoComplete"
         android:minHeight="48dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/transactionCost"
-        app:layout_constraintLeft_toRightOf="@id/transactionCost"
-        app:layout_constraintTop_toTopOf="@+id/transactionCost"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/transactionCost"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
         tools:visibility="visible" />
 
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        app:layout_constraintHeight_max="400dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/budgetText">
