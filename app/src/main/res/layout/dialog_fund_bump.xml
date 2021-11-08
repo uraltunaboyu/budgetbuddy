@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:padding="25dp"
         android:hint="Amount to add"
         android:inputType="numberDecimal"
         tools:ignore="MissingConstraints" />

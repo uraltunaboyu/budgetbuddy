@@ -1,20 +1,11 @@
 package com.tunaboyu.budgetbuddy
 
-import android.app.Dialog
-import android.content.Context
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.EditText
-import android.widget.TableRow
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.fragment.app.DialogFragment
 import com.tunaboyu.budgetbuddy.databinding.ActivityMainBinding
-import java.lang.ClassCastException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -58,12 +49,16 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return when(keyCode) {
             KeyEvent.KEYCODE_ENTER , KeyEvent.KEYCODE_NUMPAD_ENTER-> {
-                val userEntry = binding.budgetEntry.text.toString()
-                if (userEntry != "") {
+                val budgetEntry = binding.budgetText.text.toString()
+                Log.d(TAG, "Setting budget to $budgetEntry")
+                if (budgetEntry != "") {
                     if (firstUse) {
-                        firstTimeSetup(Integer.parseInt(userEntry))
+                        firstTimeSetup(Integer.parseInt(budgetEntry))
                     } else {
-                        generateTransaction()
+                        val transactionEntry = binding.transactionCost.text.toString()
+                        if (transactionEntry != "") {
+                            generateTransaction()
+                        }
                     }
                 }
                 true
@@ -82,8 +77,8 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     private fun generateTransaction() {
         val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yy")
         val transactionDate = LocalDateTime.now().format(dateFormatter)
-        val transactionCost = Integer.parseInt(binding.budgetEntry.text.toString())
-        val transactionMemo = binding.budgetMemo.text.toString()
+        val transactionCost = Integer.parseInt(binding.transactionCost.text.toString())
+        val transactionMemo = binding.transactionMemo.text.toString()
         addTransaction(Transaction(transactionDate, transactionCost, transactionMemo))
     }
 
@@ -113,22 +108,26 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     private fun addTransactionToTable(transaction: Transaction) {
         val transactionCard = TransactionCard(this)
         transactionCard.setTransaction(transaction)
-        binding.transactionTable.addView(transactionCard)
-        binding.budgetEntry.setText("")
-        binding.budgetMemo.setText("")
+        binding.transactionTable.addView(transactionCard, 0)
+        binding.transactionCost.setText("")
+        binding.transactionMemo.setText("")
     }
 
     private fun doSetup() {
         val constraintLayout = binding.root
         val constraintSet = ConstraintSet()
         constraintSet.clone(constraintLayout)
-        constraintSet.setHorizontalBias(R.id.budgetEntry, 0.1F)
-        constraintSet.setVisibility(R.id.budgetMemo, View.VISIBLE)
-        constraintSet.setVisibility(R.id.funds_bump, View.VISIBLE)
+        constraintSet.setVisibility(R.id.transactionCost, View.VISIBLE)
+        constraintSet.setVisibility(R.id.transactionMemo, View.VISIBLE)
+        constraintSet.connect(R.id.budgetText, ConstraintSet.BOTTOM, R.id.scrollView2, ConstraintSet.TOP)
         constraintSet.applyTo(constraintLayout)
+        binding.budgetText.hint = ""
         binding.budgetText.textSize = 34F
-        binding.budgetEntry.hint = "Transaction cost"
-        binding.budgetEntry.setText("")
+        binding.budgetText.setOnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) {
+                setFunds(Integer.parseInt(binding.budgetText.text.toString()))
+            }
+        }
         firstUse = false
     }
 
@@ -138,7 +137,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     }
 
     private fun updateFundsText() {
-        binding.budgetText.text = budget.getRemainingFunds().toString()
+        binding.budgetText.setText(budget.getRemainingFunds().toString())
     }
 
     // redundant parameter view is expected by the button in activity_main.xml

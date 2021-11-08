@@ -25,35 +25,42 @@
             android:minHeight="?attr/actionBarSize"></androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/budgetText"
-        android:layout_width="196dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="104dp"
-
-        android:text="@string/set_your_budget_to_get_started"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
-        android:id="@+id/budgetEntry"
-        android:layout_width="160dp"
+        android:id="@+id/budgetText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
         android:hint="@string/enter_your_budget"
         android:importantForAutofill="no"
-        android:inputType="number"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout" />
+
+    <EditText
+        android:id="@+id/transactionCost"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/transaction_cost"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
         android:maxLines="1"
         android:minHeight="48dp"
+        android:visibility="invisible"
+        app:layout_constraintHorizontal_bias="0.1"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
 
     <EditText
-        android:id="@+id/budgetMemo"
+        android:id="@+id/transactionMemo"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:autofillHints="purchase"
@@ -61,61 +68,25 @@
         android:inputType="textAutoComplete"
         android:minHeight="48dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/budgetEntry"
-        app:layout_constraintLeft_toRightOf="@id/budgetEntry"
-        app:layout_constraintTop_toTopOf="@+id/budgetEntry"
+        app:layout_constraintBottom_toBottomOf="@+id/transactionCost"
+        app:layout_constraintLeft_toRightOf="@id/transactionCost"
+        app:layout_constraintTop_toTopOf="@+id/transactionCost"
         tools:visibility="visible" />
 
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="188dp"
+        android:layout_height="500dp"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/budgetText">
 
-        <LinearLayout
+        <TableLayout
+            android:id="@+id/transactionTable"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TableLayout
-                android:id="@+id/transactionTable"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:stretchColumns="2"/>
-
-        </LinearLayout>
+            android:isScrollContainer="true"
+            android:stretchColumns="2" />
     </ScrollView>
-
-    <ImageButton
-        android:id="@+id/funds_bump"
-        style="@android:style/Widget.Material.Light.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="addFundsDialog"
-        android:src="@drawable/plus"
-        android:textColor="#000000"
-        android:visibility="invisible"
-        app:icon="@drawable/plus"
-        app:iconTint="#000000"
-        app:layout_constraintBottom_toBottomOf="@+id/budgetText"
-        app:layout_constraintEnd_toEndOf="@+id/budgetText"
-        app:layout_constraintStart_toEndOf="@+id/budgetText"
-        app:layout_constraintTop_toTopOf="@+id/budgetText"
-        tools:visibility="visible" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_transaction_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/plus"
-        android:backgroundTint="@color/white"/>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
