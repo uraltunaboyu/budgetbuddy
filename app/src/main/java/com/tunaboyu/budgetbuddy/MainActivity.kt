@@ -2,19 +2,20 @@ package com.tunaboyu.budgetbuddy
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.view.*
 import androidx.constraintlayout.widget.ConstraintSet
 import com.tunaboyu.budgetbuddy.databinding.ActivityMainBinding
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.regex.Pattern
 
 
 class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var budget: Budget
     private lateinit var db: AppDatabase
-    private lateinit var transactionDao: TransactionDao
     private var firstUse = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,13 +25,29 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         setContentView(view)
         setSupportActionBar(binding.toolbar)
         db = AppDatabase.getDatabase(applicationContext)
-        transactionDao = db.transactionDao()
-        Log.i(TAG, "Loaded db")
+        setFiltersForCostFields()
         if (!loadSavedData()) {
             budget = Budget(0)
         }
     }
-
+    
+    private fun setFiltersForCostFields() {
+        val decimalPointFilter = InputFilter { source, start, end, dest, dstart, dend ->
+            val text = dest.substring(0, dstart) + source.substring(start, end) + dest.substring(
+                dend,
+                dest.length
+            )
+            val matcher = Pattern.compile("[0-9]+(.[0-9]{0,2})?").matcher(text)
+            return@InputFilter if (!matcher.matches()) "" else null
+        }
+        val lengthFilter = InputFilter { _, _, _, dest, _, _ ->
+            return@InputFilter if (dest.length > 30) "" else null
+        }
+        binding.transactionMemo.filters = arrayOf(lengthFilter)
+        binding.transactionCost.filters = arrayOf(decimalPointFilter)
+        binding.budgetText.filters = arrayOf(decimalPointFilter)
+    }
+    
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu,menu)
         return true
@@ -106,7 +123,12 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     }
 
     private fun addTransactionToTable(transaction: Transaction) {
-        val transactionCard = TransactionCard(this)
+        var transactionCard: TransactionCard? = null
+        transactionCard = TransactionCard(this, onSwipeLeft = {
+        }, onSwipeRight = {
+            db.transactionDao().delete(transaction)
+            binding.transactionTable.removeView(transactionCard)
+        })
         transactionCard.setTransaction(transaction)
         binding.transactionTable.addView(transactionCard, 0)
         binding.transactionCost.setText("")

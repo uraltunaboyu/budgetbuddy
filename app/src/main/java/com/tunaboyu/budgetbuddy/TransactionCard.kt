@@ -8,9 +8,10 @@ import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 
-class TransactionCard(context: Context): CardView(context, null) {
+class TransactionCard(context: Context, onSwipeLeft: () -> Unit, onSwipeRight: () -> Unit): CardView(context, null) {
     init {
         View.inflate(context, R.layout.card_transaction, this)
+        findViewById<TextView>(R.id.dateCell).rootView.setOnTouchListener(OnSwipeTouchListener(context, onSwipeLeft, onSwipeRight))
     }
     
     fun setTransaction(transaction: Transaction) {
