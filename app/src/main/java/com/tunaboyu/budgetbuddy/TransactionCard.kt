@@ -1,17 +1,14 @@
 package com.tunaboyu.budgetbuddy
 
 import android.content.Context
-import android.util.AttributeSet
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 
-class TransactionCard(context: Context, onSwipeLeft: () -> Unit, onSwipeRight: () -> Unit): CardView(context, null) {
+class TransactionCard(context: Context, deleteFunction: () -> Unit): CardView(context, null) {
     init {
         View.inflate(context, R.layout.card_transaction, this)
-        findViewById<TextView>(R.id.dateCell).rootView.setOnTouchListener(OnSwipeTouchListener(context, onSwipeLeft, onSwipeRight))
+        findViewById<TextView>(R.id.dateCell).rootView.setOnTouchListener(TransactionCardTouchListener(this, context, deleteFunction))
     }
     
     fun setTransaction(transaction: Transaction) {

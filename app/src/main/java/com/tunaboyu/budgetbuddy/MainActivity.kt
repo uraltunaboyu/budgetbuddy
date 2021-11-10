@@ -124,8 +124,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
 
     private fun addTransactionToTable(transaction: Transaction) {
         var transactionCard: TransactionCard? = null
-        transactionCard = TransactionCard(this, onSwipeLeft = {
-        }, onSwipeRight = {
+        transactionCard = TransactionCard(this, deleteFunction = {
             db.transactionDao().delete(transaction)
             binding.transactionTable.removeView(transactionCard)
         })
@@ -145,7 +144,7 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         constraintSet.applyTo(constraintLayout)
         binding.budgetText.hint = ""
         binding.budgetText.textSize = 34F
-        binding.budgetText.setOnFocusChangeListener { view, hasFocus ->
+        binding.budgetText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 setFunds(Integer.parseInt(binding.budgetText.text.toString()))
             }
@@ -162,8 +161,6 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         binding.budgetText.setText(budget.getRemainingFunds().toString())
     }
 
-    // redundant parameter view is expected by the button in activity_main.xml
-    fun addFundsDialog(view: View) = AddFundsDialogFragment().show(supportFragmentManager, "add_funds")
 
     override fun addFunds(funds: Int) = setFunds(budget.getRemainingFunds() + funds)
 
