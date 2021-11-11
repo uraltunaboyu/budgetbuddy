@@ -1,4 +1,4 @@
-package com.tunaboyu.budgetbuddy
+package com.tunaboyu.budgetbuddy.ui
 
 import android.app.Dialog
 import android.content.Context
@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import java.lang.ClassCastException
+import com.tunaboyu.budgetbuddy.R
+import com.tunaboyu.budgetbuddy.model.Transaction
+import com.tunaboyu.budgetbuddy.util.Filter
 
-class EditTransactionDialogFragment(private val transaction: Transaction): DialogFragment() {
+class EditTransactionDialogFragment(private val transaction: Transaction) : DialogFragment() {
   internal lateinit var listener: EditTransactionDialogListener
   
   interface EditTransactionDialogListener {
@@ -41,9 +43,11 @@ class EditTransactionDialogFragment(private val transaction: Transaction): Dialo
           R.string.add
         ) { _, _ ->
           if (newCost.text.toString() != "") {
-            val newTransaction = Transaction(transaction.date,
-            Integer.parseInt(newCost.text.toString()),
-            newMemo.text.toString())
+            val newTransaction = Transaction(
+              transaction.date,
+              Integer.parseInt(newCost.text.toString()),
+              newMemo.text.toString()
+            )
             newTransaction.uid = transaction.uid
             listener.saveTransaction(newTransaction)
             listener.addFunds(transaction.cost - newTransaction.cost)
