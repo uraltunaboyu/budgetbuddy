@@ -5,10 +5,10 @@ import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 
-class TransactionCard(context: Context, deleteFunction: () -> Unit): CardView(context, null) {
+class TransactionCard(context: Context, editFunction: () -> Unit, deleteFunction: () -> Unit): CardView(context, null) {
     init {
         View.inflate(context, R.layout.card_transaction, this)
-        findViewById<TextView>(R.id.dateCell).rootView.setOnTouchListener(TransactionCardTouchListener(this, context, deleteFunction))
+        findViewById<TextView>(R.id.dateCell).rootView.setOnTouchListener(TransactionCardTouchListener(this, context, editFunction, deleteFunction))
     }
     
     fun setTransaction(transaction: Transaction) {

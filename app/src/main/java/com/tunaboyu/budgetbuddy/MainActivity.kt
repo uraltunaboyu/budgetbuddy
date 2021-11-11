@@ -2,17 +2,14 @@ package com.tunaboyu.budgetbuddy
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputFilter
-import android.util.Log
 import android.view.*
 import androidx.constraintlayout.widget.ConstraintSet
 import com.tunaboyu.budgetbuddy.databinding.ActivityMainBinding
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.regex.Pattern
 
 
-class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogListener {
+class MainActivity : AppCompatActivity(), EditTransactionDialogFragment.EditTransactionDialogListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var budget: Budget
     private lateinit var db: AppDatabase
@@ -32,20 +29,9 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
     }
     
     private fun setFiltersForCostFields() {
-        val decimalPointFilter = InputFilter { source, start, end, dest, dstart, dend ->
-            val text = dest.substring(0, dstart) + source.substring(start, end) + dest.substring(
-                dend,
-                dest.length
-            )
-            val matcher = Pattern.compile("[0-9]+(.[0-9]{0,2})?").matcher(text)
-            return@InputFilter if (!matcher.matches()) "" else null
-        }
-        val lengthFilter = InputFilter { _, _, _, dest, _, _ ->
-            return@InputFilter if (dest.length > 30) "" else null
-        }
-        binding.transactionMemo.filters = arrayOf(lengthFilter)
-        binding.transactionCost.filters = arrayOf(decimalPointFilter)
-        binding.budgetText.filters = arrayOf(decimalPointFilter)
+        binding.transactionMemo.filters = arrayOf(Filter.lengthFilter)
+        binding.transactionCost.filters = arrayOf(Filter.decimalPointFilter)
+        binding.budgetText.filters = arrayOf(Filter.decimalPointFilter)
     }
     
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -67,7 +53,6 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         return when(keyCode) {
             KeyEvent.KEYCODE_ENTER , KeyEvent.KEYCODE_NUMPAD_ENTER-> {
                 val budgetEntry = binding.budgetText.text.toString()
-                Log.d(TAG, "Setting budget to $budgetEntry")
                 if (budgetEntry != "") {
                     if (firstUse) {
                         firstTimeSetup(Integer.parseInt(budgetEntry))
@@ -101,15 +86,20 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
 
     private fun loadSavedData(): Boolean {
         val loadedBudget = db.budgetDao().load()
-        val loadedTransactions = db.transactionDao().loadAll()
         if (loadedBudget != null) {
             budget = loadedBudget
             doSetup()
             setFunds()
-            loadedTransactions.map { addTransactionToTable(it) }
+            buildTransactionTable()
             return true
         }
         return false
+    }
+
+    private fun buildTransactionTable() {
+        binding.transactionTable.removeAllViews()
+        val loadedTransactions = db.transactionDao().loadAll()
+        loadedTransactions.map { addTransactionToTable(it) }
     }
 
     private fun addTransaction(
@@ -124,7 +114,11 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
 
     private fun addTransactionToTable(transaction: Transaction) {
         var transactionCard: TransactionCard? = null
-        transactionCard = TransactionCard(this, deleteFunction = {
+        transactionCard = TransactionCard(this,
+            editFunction = {
+            EditTransactionDialogFragment(transaction).show(supportFragmentManager, "editTransaction")
+        },
+            deleteFunction = {
             db.transactionDao().delete(transaction)
             binding.transactionTable.removeView(transactionCard)
         })
@@ -161,6 +155,11 @@ class MainActivity : AppCompatActivity(), AddFundsDialogFragment.AddFundsDialogL
         binding.budgetText.setText(budget.getRemainingFunds().toString())
     }
 
+
+    override fun saveTransaction(transaction: Transaction) {
+        db.transactionDao().save(transaction)
+        buildTransactionTable()
+    }
 
     override fun addFunds(funds: Int) = setFunds(budget.getRemainingFunds() + funds)
 
