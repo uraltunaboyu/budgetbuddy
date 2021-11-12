@@ -17,6 +17,7 @@ import com.tunaboyu.budgetbuddy.model.Transaction
 import com.tunaboyu.budgetbuddy.ui.DatePickerFragment
 import com.tunaboyu.budgetbuddy.ui.EditTransactionDialogFragment
 import com.tunaboyu.budgetbuddy.ui.TransactionCard
+import com.tunaboyu.budgetbuddy.util.Binding
 import com.tunaboyu.budgetbuddy.util.Converters
 import com.tunaboyu.budgetbuddy.util.Filter
 import java.time.LocalDate
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity(),
   
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    binding = ActivityMainBinding.inflate(layoutInflater)
+    binding = Binding.initBinding(layoutInflater)
     val view = binding.root
     setContentView(view)
     setSupportActionBar(binding.toolbar)

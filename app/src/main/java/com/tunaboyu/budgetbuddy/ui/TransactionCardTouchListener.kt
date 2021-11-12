@@ -52,7 +52,6 @@ class TransactionCardTouchListener(
       if (!readyToEdit && !readyToDelete) view.setBackgroundColor(Color.WHITE)
       return true
     }
-    
     override fun onDown(e: MotionEvent?): Boolean {
       return true
     }
