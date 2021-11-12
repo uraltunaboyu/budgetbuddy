@@ -2,10 +2,11 @@ package com.tunaboyu.budgetbuddy.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 @Entity
 class Transaction(
-  var date: String,
+  var date: LocalDate,
   var cost: Int,
   var memo: String
 ) {

@@ -42,6 +42,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_layout" />
 
+    <TextView
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/transactionDate"
+        android:visibility="invisible"
+        android:textAlignment="center"
+        android:textSize="24dp"
+        android:layout_margin="15dp"
+        android:onClick="showDatePickerDialog"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/transactionCost"
+        tools:visibility="visible"
+        tools:text="10/10/10"/>
+
     <EditText
         android:id="@+id/transactionCost"
         android:layout_width="160dp"

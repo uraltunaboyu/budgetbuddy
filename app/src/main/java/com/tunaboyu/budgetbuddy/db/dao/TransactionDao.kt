@@ -5,7 +5,7 @@ import com.tunaboyu.budgetbuddy.model.Transaction
 
 @Dao
 interface TransactionDao {
-  @Query("SELECT * FROM `transaction` ORDER BY uid ASC")
+  @Query("SELECT * FROM `transaction` ORDER BY date ASC")
   fun loadAll(): List<Transaction>
   
   @Insert(onConflict = OnConflictStrategy.REPLACE)

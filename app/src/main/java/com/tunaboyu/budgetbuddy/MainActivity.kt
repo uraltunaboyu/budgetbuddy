@@ -1,28 +1,36 @@
 package com.tunaboyu.budgetbuddy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 import com.tunaboyu.budgetbuddy.databinding.ActivityMainBinding
 import com.tunaboyu.budgetbuddy.db.AppDatabase
 import com.tunaboyu.budgetbuddy.model.Budget
 import com.tunaboyu.budgetbuddy.model.Transaction
+import com.tunaboyu.budgetbuddy.ui.DatePickerFragment
 import com.tunaboyu.budgetbuddy.ui.EditTransactionDialogFragment
 import com.tunaboyu.budgetbuddy.ui.TransactionCard
+import com.tunaboyu.budgetbuddy.util.Converters
 import com.tunaboyu.budgetbuddy.util.Filter
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
 class MainActivity : AppCompatActivity(),
-  EditTransactionDialogFragment.EditTransactionDialogListener {
+  EditTransactionDialogFragment.EditTransactionDialogListener,
+  DatePickerFragment.DatePickerFragmentListener {
   private lateinit var binding: ActivityMainBinding
   private lateinit var budget: Budget
   private lateinit var db: AppDatabase
+  private lateinit var editingTransaction: EditTransactionDialogFragment
   private var firstUse = true
   
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,8 +95,7 @@ class MainActivity : AppCompatActivity(),
   }
   
   private fun generateTransaction() {
-    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yy")
-    val transactionDate = LocalDateTime.now().format(dateFormatter)
+    val transactionDate = LocalDate.parse(binding.transactionDate.text, Converters.formatter)
     val transactionCost = Integer.parseInt(binding.transactionCost.text.toString())
     val transactionMemo = binding.transactionMemo.text.toString()
     addTransaction(Transaction(transactionDate, transactionCost, transactionMemo))
@@ -119,14 +126,15 @@ class MainActivity : AppCompatActivity(),
     budget.transact(newTransaction)
     db.budgetDao().save(budget)
     updateFundsText()
-    addTransactionToTable(newTransaction)
+    buildTransactionTable()
   }
   
   private fun addTransactionToTable(transaction: Transaction) {
     var transactionCard: TransactionCard? = null
     transactionCard = TransactionCard(this,
       editFunction = {
-        EditTransactionDialogFragment(transaction).show(supportFragmentManager, "editTransaction")
+        editingTransaction = EditTransactionDialogFragment(transaction)
+        editingTransaction.show(supportFragmentManager, "editTransaction")
       },
       deleteFunction = {
         db.transactionDao().delete(transaction)
@@ -144,6 +152,7 @@ class MainActivity : AppCompatActivity(),
     constraintSet.clone(constraintLayout)
     constraintSet.setVisibility(R.id.transactionCost, View.VISIBLE)
     constraintSet.setVisibility(R.id.transactionMemo, View.VISIBLE)
+    constraintSet.setVisibility(R.id.transactionDate, View.VISIBLE)
     constraintSet.connect(
       R.id.budgetText,
       ConstraintSet.BOTTOM,
@@ -151,6 +160,7 @@ class MainActivity : AppCompatActivity(),
       ConstraintSet.TOP
     )
     constraintSet.applyTo(constraintLayout)
+    binding.transactionDate.text = LocalDate.now().format(Converters.formatter)
     binding.budgetText.hint = ""
     binding.budgetText.textSize = 34F
     binding.budgetText.setOnFocusChangeListener { _, hasFocus ->
@@ -184,7 +194,17 @@ class MainActivity : AppCompatActivity(),
     updateFundsText()
   }
   
+  fun showDatePickerDialog(view: View) {
+    val newFragment = DatePickerFragment()
+    newFragment.listener = if (view is MaterialButton) editingTransaction else this
+    newFragment.show(supportFragmentManager, "datePicker")
+  }
+  
   companion object {
     private const val TAG = "BudgetBuddy"
+  }
+  
+  override fun setDate(date: String) {
+    binding.transactionDate.text = date
   }
 }
