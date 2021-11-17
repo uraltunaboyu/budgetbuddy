@@ -19,7 +19,7 @@ class TransactionCard(context: Context, editFunction: () -> Unit, deleteFunction
   
   fun setTransaction(transaction: Transaction) {
     findViewById<TextView>(R.id.dateCell).text = transaction.date.format(Converters.formatter)
-    findViewById<TextView>(R.id.costCell).text = transaction.cost.toString()
+    findViewById<TextView>(R.id.costCell).text = "%.2f".format(transaction.cost)
     findViewById<TextView>(R.id.memoCell).text = transaction.memo
   }
 }

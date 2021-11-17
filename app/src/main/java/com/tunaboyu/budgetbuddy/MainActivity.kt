@@ -1,7 +1,6 @@
 package com.tunaboyu.budgetbuddy
 
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -9,7 +8,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.textview.MaterialTextView
 import com.tunaboyu.budgetbuddy.databinding.ActivityMainBinding
 import com.tunaboyu.budgetbuddy.db.AppDatabase
 import com.tunaboyu.budgetbuddy.model.Budget
@@ -21,8 +19,6 @@ import com.tunaboyu.budgetbuddy.util.Binding
 import com.tunaboyu.budgetbuddy.util.Converters
 import com.tunaboyu.budgetbuddy.util.Filter
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 class MainActivity : AppCompatActivity(),
@@ -43,7 +39,7 @@ class MainActivity : AppCompatActivity(),
     db = AppDatabase.getDatabase(applicationContext)
     setFiltersForCostFields()
     if (!loadSavedData()) {
-      budget = Budget(0)
+      budget = Budget(0F)
     }
   }
   
@@ -74,7 +70,7 @@ class MainActivity : AppCompatActivity(),
         val budgetEntry = binding.budgetText.text.toString()
         if (budgetEntry != "") {
           if (firstUse) {
-            firstTimeSetup(Integer.parseInt(budgetEntry))
+            firstTimeSetup(budgetEntry.toFloat())
           } else {
             val transactionEntry = binding.transactionCost.text.toString()
             if (transactionEntry != "") {
@@ -91,13 +87,13 @@ class MainActivity : AppCompatActivity(),
   private fun clearAllData() {
     db.budgetDao().deleteAll()
     db.transactionDao().deleteAll()
-    setFunds(0)
+    setFunds(0F)
     binding.transactionTable.removeAllViews()
   }
   
   private fun generateTransaction() {
     val transactionDate = LocalDate.parse(binding.transactionDate.text, Converters.formatter)
-    val transactionCost = Integer.parseInt(binding.transactionCost.text.toString())
+    val transactionCost = binding.transactionCost.text.toString().toFloat()
     val transactionMemo = binding.transactionMemo.text.toString()
     addTransaction(Transaction(transactionDate, transactionCost, transactionMemo))
   }
@@ -166,19 +162,19 @@ class MainActivity : AppCompatActivity(),
     binding.budgetText.textSize = 34F
     binding.budgetText.setOnFocusChangeListener { _, hasFocus ->
       if (!hasFocus) {
-        setFunds(Integer.parseInt(binding.budgetText.text.toString()))
+        setFunds(binding.budgetText.text.toString().toFloat())
       }
     }
     firstUse = false
   }
   
-  private fun firstTimeSetup(funds: Int) {
+  private fun firstTimeSetup(funds: Float) {
     doSetup()
     setFunds(funds)
   }
   
   private fun updateFundsText() {
-    binding.budgetText.setText(budget.getRemainingFunds().toString())
+    binding.budgetText.setText("%.2f".format(budget.getRemainingFunds()))
   }
   
   
@@ -187,9 +183,9 @@ class MainActivity : AppCompatActivity(),
     buildTransactionTable()
   }
   
-  override fun addFunds(funds: Int) = setFunds(budget.getRemainingFunds() + funds)
+  override fun addFunds(funds: Float) = setFunds(budget.getRemainingFunds() + funds)
   
-  private fun setFunds(funds: Int = budget.getRemainingFunds()) {
+  private fun setFunds(funds: Float = budget.getRemainingFunds()) {
     budget.setFunds(funds)
     db.budgetDao().save(budget)
     updateFundsText()

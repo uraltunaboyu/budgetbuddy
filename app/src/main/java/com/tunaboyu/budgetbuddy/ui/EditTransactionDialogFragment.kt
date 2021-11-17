@@ -21,7 +21,7 @@ class EditTransactionDialogFragment(private val transaction: Transaction) : Dial
   
   interface EditTransactionDialogListener {
     fun saveTransaction(transaction: Transaction)
-    fun addFunds(funds: Int)
+    fun addFunds(funds: Float)
   }
   
   override fun setDate(date: String) {
@@ -57,7 +57,7 @@ class EditTransactionDialogFragment(private val transaction: Transaction) : Dial
           if (newCost.text.toString() != "") {
             val newTransaction = Transaction(
               LocalDate.parse(newDate.text.toString(), Converters.formatter),
-              Integer.parseInt(newCost.text.toString()),
+              newCost.text.toString().toFloat(),
               newMemo.text.toString()
             )
             newTransaction.uid = transaction.uid

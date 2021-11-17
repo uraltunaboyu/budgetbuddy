@@ -7,7 +7,7 @@ import java.time.LocalDate
 @Entity
 class Transaction(
   var date: LocalDate,
-  var cost: Int,
+  var cost: Float,
   var memo: String
 ) {
   @PrimaryKey(autoGenerate = true)

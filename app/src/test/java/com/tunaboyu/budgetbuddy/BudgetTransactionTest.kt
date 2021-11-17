@@ -6,7 +6,6 @@ import com.tunaboyu.budgetbuddy.util.Converters
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate
-import java.time.ZoneId
 
 /**
  * Example local unit test, which will execute on the development machine (host).
