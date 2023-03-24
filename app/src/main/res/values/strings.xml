@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BudgetBuddy</string>
+    <string name="add_budget">Add Budget</string>
+    <string name="budget_name">Budget Name</string>
+    <string name="budget_limit">Spending Limit</string>
+    <string name="submit">Submit</string>
+    <string name="transaction_name">Transaction Name</string>
+    <string name="transaction_cost">Transaction Cost</string>
+    <string name="transaction_category">Transaction Category</string>
+    <string name="transaction_budget">Budget of Transaction</string>
+</resources>
